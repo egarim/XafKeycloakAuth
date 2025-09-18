@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XafKeycloakAuth.Blazor.Server", "XafKeycloakAuth.Blazor.Server\XafKeycloakAuth.Blazor.Server.csproj", "{84FA00A5-BB15-4C47-A244-467F317B967C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XafKeycloakAuth.Module", "XafKeycloakAuth.Module\XafKeycloakAuth.Module.csproj", "{A4BF57EF-9AEE-45D5-9843-F927D4095C09}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XafKeycloakAuth.Win", "XafKeycloakAuth.Win\XafKeycloakAuth.Win.csproj", "{8BF9107F-E027-41F2-978F-5AEF960DCCCB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		EasyTest|Any CPU = EasyTest|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84FA00A5-BB15-4C47-A244-467F317B967C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84FA00A5-BB15-4C47-A244-467F317B967C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84FA00A5-BB15-4C47-A244-467F317B967C}.EasyTest|Any CPU.ActiveCfg = EasyTest|Any CPU
+		{84FA00A5-BB15-4C47-A244-467F317B967C}.EasyTest|Any CPU.Build.0 = EasyTest|Any CPU
+		{84FA00A5-BB15-4C47-A244-467F317B967C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84FA00A5-BB15-4C47-A244-467F317B967C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4BF57EF-9AEE-45D5-9843-F927D4095C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4BF57EF-9AEE-45D5-9843-F927D4095C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4BF57EF-9AEE-45D5-9843-F927D4095C09}.EasyTest|Any CPU.ActiveCfg = EasyTest|Any CPU
+		{A4BF57EF-9AEE-45D5-9843-F927D4095C09}.EasyTest|Any CPU.Build.0 = EasyTest|Any CPU
+		{A4BF57EF-9AEE-45D5-9843-F927D4095C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4BF57EF-9AEE-45D5-9843-F927D4095C09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BF9107F-E027-41F2-978F-5AEF960DCCCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BF9107F-E027-41F2-978F-5AEF960DCCCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BF9107F-E027-41F2-978F-5AEF960DCCCB}.EasyTest|Any CPU.ActiveCfg = EasyTest|Any CPU
+		{8BF9107F-E027-41F2-978F-5AEF960DCCCB}.EasyTest|Any CPU.Build.0 = EasyTest|Any CPU
+		{8BF9107F-E027-41F2-978F-5AEF960DCCCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BF9107F-E027-41F2-978F-5AEF960DCCCB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {71B689A1-6A38-4900-AC01-3C405A3F7035}
+	EndGlobalSection
+EndGlobal

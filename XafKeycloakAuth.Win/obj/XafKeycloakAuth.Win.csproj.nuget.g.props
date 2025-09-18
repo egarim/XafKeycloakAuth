@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
+    <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
+    <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">$(UserProfile)\.nuget\packages\</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">C:\Users\joche\.nuget\packages\;C:\Program Files (x86)\DevExpress 21.2\Components\Offline Packages;C:\Program Files\DevExpress 24.2\Components\Offline Packages;C:\Program Files\DevExpress 25.1\Components\Offline Packages;C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages</NuGetPackageFolders>
+    <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">PackageReference</NuGetProjectStyle>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">7.0.0</NuGetToolVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <SourceRoot Include="C:\Users\joche\.nuget\packages\" />
+    <SourceRoot Include="C:\Program Files (x86)\DevExpress 21.2\Components\Offline Packages\" />
+    <SourceRoot Include="C:\Program Files\DevExpress 24.2\Components\Offline Packages\" />
+    <SourceRoot Include="C:\Program Files\DevExpress 25.1\Components\Offline Packages\" />
+    <SourceRoot Include="C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages\" />
+  </ItemGroup>
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore\8.0.11\buildTransitive\net8.0\Microsoft.EntityFrameworkCore.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore\8.0.11\buildTransitive\net8.0\Microsoft.EntityFrameworkCore.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.codeanalysis.analyzers\3.3.4\buildTransitive\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('$(NuGetPackageRoot)microsoft.codeanalysis.analyzers\3.3.4\buildTransitive\Microsoft.CodeAnalysis.Analyzers.props')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.entityframeworkcore.design\8.0.11\build\net8.0\Microsoft.EntityFrameworkCore.Design.props" Condition="Exists('$(NuGetPackageRoot)microsoft.entityframeworkcore.design\8.0.11\build\net8.0\Microsoft.EntityFrameworkCore.Design.props')" />
+    <Import Project="$(NuGetPackageRoot)devexpress.data.desktop\25.1.6-pre-25257\build\net8.0-windows\DevExpress.Data.Desktop.props" Condition="Exists('$(NuGetPackageRoot)devexpress.data.desktop\25.1.6-pre-25257\build\net8.0-windows\DevExpress.Data.Desktop.props')" />
+    <Import Project="$(NuGetPackageRoot)devexpress.diagram.core\25.1.6-pre-25257\build\net8.0-windows\DevExpress.Diagram.Core.props" Condition="Exists('$(NuGetPackageRoot)devexpress.diagram.core\25.1.6-pre-25257\build\net8.0-windows\DevExpress.Diagram.Core.props')" />
+  </ImportGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgMicrosoft_CodeAnalysis_Analyzers Condition=" '$(PkgMicrosoft_CodeAnalysis_Analyzers)' == '' ">C:\Users\joche\.nuget\packages\microsoft.codeanalysis.analyzers\3.3.4</PkgMicrosoft_CodeAnalysis_Analyzers>
+    <PkgDevExpress_Data Condition=" '$(PkgDevExpress_Data)' == '' ">C:\Users\joche\.nuget\packages\devexpress.data\25.1.6-pre-25257</PkgDevExpress_Data>
+    <PkgDevExpress_Xpo Condition=" '$(PkgDevExpress_Xpo)' == '' ">C:\Users\joche\.nuget\packages\devexpress.xpo\25.1.6-pre-25257</PkgDevExpress_Xpo>
+    <PkgDevExpress_ExpressApp Condition=" '$(PkgDevExpress_ExpressApp)' == '' ">C:\Users\joche\.nuget\packages\devexpress.expressapp\25.1.6-pre-25257</PkgDevExpress_ExpressApp>
+    <PkgDevExpress_DataAccess Condition=" '$(PkgDevExpress_DataAccess)' == '' ">C:\Users\joche\.nuget\packages\devexpress.dataaccess\25.1.6-pre-25257</PkgDevExpress_DataAccess>
+    <PkgDevExpress_ExpressApp_CodeAnalysis Condition=" '$(PkgDevExpress_ExpressApp_CodeAnalysis)' == '' ">C:\Users\joche\.nuget\packages\devexpress.expressapp.codeanalysis\25.1.6-pre-25257</PkgDevExpress_ExpressApp_CodeAnalysis>
+    <PkgMicrosoft_Web_WebView2 Condition=" '$(PkgMicrosoft_Web_WebView2)' == '' ">C:\Users\joche\.nuget\packages\microsoft.web.webview2\1.0.864.35</PkgMicrosoft_Web_WebView2>
+    <PkgDevExpress_Utils Condition=" '$(PkgDevExpress_Utils)' == '' ">C:\Users\joche\.nuget\packages\devexpress.utils\25.1.6-pre-25257</PkgDevExpress_Utils>
+    <PkgDevExpress_Win_Navigation Condition=" '$(PkgDevExpress_Win_Navigation)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.navigation\25.1.6-pre-25257</PkgDevExpress_Win_Navigation>
+    <PkgDevExpress_Win_TreeList Condition=" '$(PkgDevExpress_Win_TreeList)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.treelist\25.1.6-pre-25257</PkgDevExpress_Win_TreeList>
+    <PkgDevExpress_Win_Printing Condition=" '$(PkgDevExpress_Win_Printing)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.printing\25.1.6-pre-25257</PkgDevExpress_Win_Printing>
+    <PkgDevExpress_Win_VerticalGrid Condition=" '$(PkgDevExpress_Win_VerticalGrid)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.verticalgrid\25.1.6-pre-25257</PkgDevExpress_Win_VerticalGrid>
+    <PkgDevExpress_Win_TreeMap Condition=" '$(PkgDevExpress_Win_TreeMap)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.treemap\25.1.6-pre-25257</PkgDevExpress_Win_TreeMap>
+    <PkgDevExpress_Win_Grid Condition=" '$(PkgDevExpress_Win_Grid)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.grid\25.1.6-pre-25257</PkgDevExpress_Win_Grid>
+    <PkgDevExpress_Win_RichEdit Condition=" '$(PkgDevExpress_Win_RichEdit)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.richedit\25.1.6-pre-25257</PkgDevExpress_Win_RichEdit>
+    <PkgDevExpress_Win_PivotGrid Condition=" '$(PkgDevExpress_Win_PivotGrid)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.pivotgrid\25.1.6-pre-25257</PkgDevExpress_Win_PivotGrid>
+    <PkgDevExpress_Win_Diagram Condition=" '$(PkgDevExpress_Win_Diagram)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.diagram\25.1.6-pre-25257</PkgDevExpress_Win_Diagram>
+    <PkgDevExpress_Win Condition=" '$(PkgDevExpress_Win)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win\25.1.6-pre-25257</PkgDevExpress_Win>
+    <PkgDevExpress_DataAccess_UI Condition=" '$(PkgDevExpress_DataAccess_UI)' == '' ">C:\Users\joche\.nuget\packages\devexpress.dataaccess.ui\25.1.6-pre-25257</PkgDevExpress_DataAccess_UI>
+    <PkgDevExpress_Win_Spreadsheet Condition=" '$(PkgDevExpress_Win_Spreadsheet)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.spreadsheet\25.1.6-pre-25257</PkgDevExpress_Win_Spreadsheet>
+    <PkgDevExpress_Win_SpellChecker Condition=" '$(PkgDevExpress_Win_SpellChecker)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.spellchecker\25.1.6-pre-25257</PkgDevExpress_Win_SpellChecker>
+    <PkgDevExpress_Win_Scheduler Condition=" '$(PkgDevExpress_Win_Scheduler)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.scheduler\25.1.6-pre-25257</PkgDevExpress_Win_Scheduler>
+    <PkgDevExpress_Win_SchedulerReporting Condition=" '$(PkgDevExpress_Win_SchedulerReporting)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.schedulerreporting\25.1.6-pre-25257</PkgDevExpress_Win_SchedulerReporting>
+    <PkgDevExpress_Win_Charts Condition=" '$(PkgDevExpress_Win_Charts)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.charts\25.1.6-pre-25257</PkgDevExpress_Win_Charts>
+    <PkgDevExpress_Win_Reporting Condition=" '$(PkgDevExpress_Win_Reporting)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.reporting\25.1.6-pre-25257</PkgDevExpress_Win_Reporting>
+    <PkgDevExpress_Win_SchedulerExtensions Condition=" '$(PkgDevExpress_Win_SchedulerExtensions)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.schedulerextensions\25.1.6-pre-25257</PkgDevExpress_Win_SchedulerExtensions>
+    <PkgDevExpress_Win_PdfViewer Condition=" '$(PkgDevExpress_Win_PdfViewer)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.pdfviewer\25.1.6-pre-25257</PkgDevExpress_Win_PdfViewer>
+    <PkgDevExpress_Win_Map Condition=" '$(PkgDevExpress_Win_Map)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.map\25.1.6-pre-25257</PkgDevExpress_Win_Map>
+    <PkgDevExpress_Win_Gauges Condition=" '$(PkgDevExpress_Win_Gauges)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.gauges\25.1.6-pre-25257</PkgDevExpress_Win_Gauges>
+    <PkgDevExpress_Win_Gantt Condition=" '$(PkgDevExpress_Win_Gantt)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.gantt\25.1.6-pre-25257</PkgDevExpress_Win_Gantt>
+    <PkgDevExpress_Win_Dialogs Condition=" '$(PkgDevExpress_Win_Dialogs)' == '' ">C:\Users\joche\.nuget\packages\devexpress.win.dialogs\25.1.6-pre-25257</PkgDevExpress_Win_Dialogs>
+    <PkgDevExpress_ExpressApp_Win_Design Condition=" '$(PkgDevExpress_ExpressApp_Win_Design)' == '' ">C:\Users\joche\.nuget\packages\devexpress.expressapp.win.design\25.1.6-pre-25257</PkgDevExpress_ExpressApp_Win_Design>
+  </PropertyGroup>
+</Project>

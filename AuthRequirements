@@ -1,0 +1,177 @@
+# XAF OAuth with Keycloak Integration - Project Summary
+
+## Objective
+Integrate Keycloak as an OpenID Connect authentication provider with DevExpress XAF (Cross-Platform .NET App UI) Blazor application, replacing the default Azure AD OAuth2 configuration.
+
+## Problem Statement
+- XAF documentation primarily shows Azure AD OAuth2 integration
+- Need to adapt XAF's authentication system to work with Keycloak OpenID Connect
+- Must bridge between ASP.NET Core OpenID Connect authentication and XAF's internal security system
+- Avoid authentication loops that occur when external authentication succeeds but XAF security doesn't recognize the user
+
+## Key Technical Requirements
+
+### 1. Two-Stage Authentication Process
+XAF requires a two-step authentication process:
+1. **ASP.NET Core Authentication** - Handle OpenID Connect with Keycloak
+2. **XAF Security Authentication** - Bridge the external user to XAF's internal user system
+
+### 2. User Management
+- Auto-create XAF users from Keycloak authentication
+- Map Keycloak claims to XAF user properties
+- Assign appropriate roles and permissions
+
+### 3. Proper XAF Integration
+- Use XAF's official APIs and services
+- Follow XAF's middleware patterns
+- Handle ObjectSpace operations correctly
+
+## Reference Documentation
+
+### Primary XAF Documentation (Publicly Accessible)
+- **XAF OAuth2 Azure Authentication**: https://docs.devexpress.com/eXpressAppFramework/403505/backend-web-api-service/authentication-in-web-api-applications/enable-oauth2-azure-authentication
+- **XAF ObjectSpace Access in Middleware**: https://docs.devexpress.com/eXpressAppFramework/403669/data-manipulation-and-business-logic/access-object-space-security-and-caption-helper-in-asp-net-core-environment
+- **XAF Authentication Overview**: https://docs.devexpress.com/eXpressAppFramework/119064/data-security-and-safety/security-system/authentication
+- **XAF Blazor OAuth Providers**: https://docs.devexpress.com/eXpressAppFramework/402197/data-security-and-safety/security-system/authentication/oauth-and-custom-authentication/active-directory-and-oauth2-authentication-providers-in-blazor-applications
+
+### Keycloak Documentation (Publicly Accessible)
+- **Keycloak OpenID Connect**: https://www.keycloak.org/securing-apps/oidc-layers
+- **Keycloak Endpoints Discovery**: Available at `{keycloak-url}/realms/{realm}/.well-known/openid-configuration`
+
+### Microsoft Documentation (Publicly Accessible)
+- **ASP.NET Core OpenID Connect**: https://learn.microsoft.com/en-us/aspnet/core/security/authentication/configure-oidc-web-authentication
+
+### DevExpress Support Tickets (Private - Content Provided)
+- **T1173156**: "OpenId Connect With XAF" - Shows authentication loop issue and DevExpress recommendation
+- **T1097193**: "AutoLogin by URL does not work any more" - Shows proper use of `IStandardAuthenticationIdentityCreator`
+
+## Key Technical Insights from Support Tickets
+
+### From T1173156 (OpenID Connect with XAF)
+**Problem**: Authentication loop after successful Keycloak login
+
+**DevExpress Solution**: 
+- Create standard Blazor app first to test OpenID Connect
+- Use `CustomAuthenticationProvider` to bridge ASP.NET Core auth to XAF Security
+- Two-step authentication process is mandatory
+
+### From T1097193 (AutoLogin Implementation)
+**Key API**: Use `IStandardAuthenticationIdentityCreator` service
+```csharp
+var identityCreator = context.RequestServices.GetRequiredService<IStandardAuthenticationIdentityCreator>();
+ClaimsIdentity id = identityCreator.CreateIdentity(userId);
+await context.SignInAsync(new ClaimsPrincipal(id));
+```
+
+## Implementation Architecture
+
+### 1. OpenID Connect Configuration
+```csharp
+services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = "KeyCloakTest";
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddOpenIdConnect("KeyCloakTest", "KeyCloakTest", options =>
+{
+    options.Authority = "https://domain.com/realms/realm-name";
+    options.ClientId = "client-name";
+    options.ClientSecret = "xxxxxxxxxxxxxx";
+    options.ResponseType = OpenIdConnectResponseType.Code;
+    options.GetClaimsFromUserInfoEndpoint = true;
+    options.SaveTokens = true;
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+});
+```
+
+### 2. XAF Security Configuration
+```csharp
+services.AddXafAspNetCoreSecurity(Configuration, options =>
+{
+    options.RoleType = typeof(PermissionPolicyRole);
+    options.UserType = typeof(ApplicationUser);
+    options.UserLoginInfoType = typeof(ApplicationUserLoginInfo);
+    options.SupportNavigationPermissionsForTypes = false;
+})
+.AddAuthenticationStandard(options =>
+{
+    options.IsSupportChangePassword = false;
+});
+```
+
+### 3. Bridge Middleware
+Custom middleware that:
+- Detects successful Keycloak authentication
+- Uses `INonSecuredObjectSpaceFactory` to access XAF database
+- Creates/updates XAF users from Keycloak claims
+- Uses `IStandardAuthenticationIdentityCreator` to create XAF identity
+- Signs user into XAF security system
+
+### 4. Key Services and APIs
+- **`INonSecuredObjectSpaceFactory`**: Access XAF database without authentication
+- **`IStandardAuthenticationIdentityCreator`**: Official XAF API for creating authenticated identities
+- **`IObjectSpace`**: XAF's data access layer
+- **`ApplicationUser`**: XAF user entity
+- **`PermissionPolicyRole`**: XAF role entity
+
+## Keycloak Endpoint Configuration
+Standard OpenID Connect endpoints:
+- **Authority**: `https://your-keycloak-server/realms/your-realm`
+- **Authorization**: `{authority}/protocol/openid-connect/auth`
+- **Token**: `{authority}/protocol/openid-connect/token`
+- **UserInfo**: `{authority}/protocol/openid-connect/userinfo`
+
+## Claim Mapping
+Map Keycloak claims to XAF user properties:
+- `preferred_username` → `ApplicationUser.UserName`
+- `email` → `ApplicationUser.Email`
+- `name` → `ApplicationUser.DisplayName` (if available)
+- `given_name` → `ApplicationUser.FirstName` (if available)
+- `family_name` → `ApplicationUser.LastName` (if available)
+- Keycloak roles → XAF `PermissionPolicyRole` assignments
+
+## Success Criteria
+1. User can click "KeyCloak" login button in XAF
+2. Redirected to Keycloak login page
+3. After successful Keycloak authentication, user is automatically logged into XAF
+4. XAF user is auto-created if doesn't exist
+5. User has appropriate roles and permissions
+6. No authentication loops occur
+7. User can access XAF functionality based on assigned permissions
+
+## Development Approach
+1. **Phase 1**: Create standard ASP.NET Core Blazor app with Keycloak OpenID Connect (as recommended by DevExpress)
+2. **Phase 2**: Implement bridge middleware in XAF application
+3. **Phase 3**: Test and refine user creation and role assignment logic
+
+This approach follows DevExpress's official recommendation to first prove the concept in a standard Blazor application before integrating into XAF.
+
+## Additional Technical Notes
+
+### Required NuGet Packages
+```xml
+<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+<PackageReference Include="DevExpress.ExpressApp.Security.Authentication.Internal" />
+```
+
+### Middleware Registration Order
+```csharp
+app.UseRouting();
+app.UseAuthentication();
+app.UseMiddleware<KeycloakXafBridgeMiddleware>(); // After auth, before authorization
+app.UseAuthorization();
+```
+
+### Error Handling Considerations
+- Handle cases where Keycloak user doesn't map to XAF user
+- Manage ObjectSpace exceptions during user creation
+- Implement logging for authentication failures
+- Provide fallback authentication methods if needed
+
+### Security Considerations
+- Validate Keycloak tokens properly
+- Use HTTPS for all authentication flows
+- Implement proper logout handling for both Keycloak and XAF
+- Consider token refresh scenarios
+- Implement proper CORS configuration for redirect URIs
