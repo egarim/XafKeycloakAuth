@@ -1,0 +1,72 @@
+@page "/authtest"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Web
+@inject IAccessTokenProvider TokenProvider
+@attribute [Authorize]
+
+<PageTitle>Authentication Test</PageTitle>
+
+<h3>Authentication Test</h3>
+
+<AuthorizeView>
+    <Authorized>
+        <h4>User Information</h4>
+        <p><strong>Name:</strong> @context.User.Identity?.Name</p>
+        <p><strong>Is Authenticated:</strong> @context.User.Identity?.IsAuthenticated</p>
+        <p><strong>Authentication Type:</strong> @context.User.Identity?.AuthenticationType</p>
+        
+        <h4>Claims</h4>
+        @if (context.User.Claims.Any())
+        {
+            <ul>
+                @foreach (var claim in context.User.Claims)
+                {
+                    <li><strong>@claim.Type:</strong> @claim.Value</li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>No claims found.</p>
+        }
+
+        <h4>Access Token</h4>
+        <p><strong>Token Status:</strong> @tokenStatus</p>
+        @if (accessToken != null)
+        {
+            <p><strong>Token Value:</strong> @accessToken.Value</p>
+            <p><strong>Expires:</strong> @accessToken.Expires</p>
+            <p><strong>Scopes:</strong> @string.Join(", ", accessToken.GrantedScopes)</p>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <p>You are not authenticated. Please <a href="authentication/login">log in</a>.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    private string tokenStatus = "Loading...";
+    private AccessToken? accessToken;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var tokenResult = await TokenProvider.RequestAccessToken();
+            if (tokenResult.TryGetToken(out accessToken))
+            {
+                tokenStatus = "Token retrieved successfully";
+            }
+            else
+            {
+                tokenStatus = "Failed to retrieve token";
+            }
+        }
+        catch (Exception ex)
+        {
+            tokenStatus = $"Error: {ex.Message}";
+        }
+    }
+}

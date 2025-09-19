@@ -1,0 +1,106 @@
+@page "/profile"
+@using Microsoft.AspNetCore.Authorization
+@using BlazorServer.Services
+@inject IAuthService AuthService
+@inject IApiService ApiService
+@attribute [Authorize]
+
+<PageTitle>User Profile</PageTitle>
+
+<h1>User Profile</h1>
+
+@if (user != null)
+{
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Welcome, @user.Identity?.Name!</h5>
+                    
+                    <h6>User Claims:</h6>
+                    <ul>
+                        @foreach (var claim in user.Claims)
+                        {
+                            <li><strong>@claim.Type:</strong> @claim.Value</li>
+                        }
+                    </ul>
+                    
+                    <h6>User Roles:</h6>
+                    <ul>
+                        @foreach (var role in user.FindAll(System.Security.Claims.ClaimTypes.Role))
+                        {
+                            <li>@role.Value</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h6>Quick API Test</h6>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-primary btn-sm mb-2" @onclick="TestApiCall">Test API Call</button>
+                    
+                    @if (!string.IsNullOrEmpty(apiTestResult))
+                    {
+                        <div class="alert alert-info">
+                            <strong>API Response:</strong><br/>
+                            <small>@apiTestResult</small>
+                        </div>
+                    }
+                    
+                    <div class="mt-2">
+                        <a href="/api-test" class="btn btn-outline-primary btn-sm">Go to Full API Test Page</a>
+                    </div>
+                </div>
+            </div>
+            
+            @if (accessToken != null)
+            {
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6>Access Token Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Token Length:</strong> @accessToken.Length characters</p>
+                        <p><strong>Token Preview:</strong></p>
+                        <textarea class="form-control" rows="3" readonly style="font-size: 10px;">@accessToken.Substring(0, Math.Min(200, accessToken.Length))...</textarea>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private System.Security.Claims.ClaimsPrincipal? user;
+    private string? accessToken;
+    private string? apiTestResult;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await AuthService.GetCurrentUserAsync();
+        accessToken = await AuthService.GetAccessTokenAsync();
+    }
+
+    private async Task TestApiCall()
+    {
+        try
+        {
+            apiTestResult = "Testing...";
+            StateHasChanged();
+
+            var result = await ApiService.GetAsync<object>("api/values");
+            apiTestResult = $"Success: {System.Text.Json.JsonSerializer.Serialize(result)}";
+        }
+        catch (Exception ex)
+        {
+            apiTestResult = $"Error: {ex.Message}";
+        }
+        
+        StateHasChanged();
+    }
+}

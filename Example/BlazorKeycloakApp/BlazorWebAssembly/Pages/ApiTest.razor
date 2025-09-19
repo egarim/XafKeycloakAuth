@@ -1,0 +1,415 @@
+@page "/api-test"
+@using Microsoft.AspNetCore.Authorization
+@using BlazorWebAssembly.Services
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using System.IdentityModel.Tokens.Jwt
+@using System.Text.Json
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject IApiService ApiService
+@inject IAuthService AuthService
+@inject IApiDiagnosticsService ApiDiagnosticsService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ILogger<ApiTest> Logger
+@inject IJSRuntime JSRuntime
+@attribute [Authorize]
+
+<PageTitle>API Test</PageTitle>
+
+<h1>API Integration Test</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>🔍 Authentication Diagnostics</h5>
+            </div>
+            <div class="card-body">
+                <div class="btn-group mb-3" role="group">
+                    <button class="btn btn-primary" @onclick="RunDiagnostics">🔍 Run Full Diagnostics</button>
+                    <button class="btn btn-info" @onclick="AnalyzeToken">🎟️ Analyze Token</button>
+                    <button class="btn btn-secondary" @onclick="TestProtectedEndpoint">🔒 Test Protected Endpoint</button>
+                    <button class="btn btn-warning" @onclick="CheckConfiguration">⚙️ Check Configuration</button>
+                    <button class="btn btn-success" @onclick="ShowAccessToken">📋 Copy Token</button>
+                </div>
+                @if (!string.IsNullOrEmpty(diagnosticsResult))
+                {
+                    <div class="alert alert-info">
+                        <strong>Diagnostics Result:</strong>
+                        <pre style="background-color: #f8f9fa; padding: 1rem; border-radius: 0.25rem; margin-top: 0.5rem; white-space: pre-wrap; word-wrap: break-word;">@diagnosticsResult</pre>
+                    </div>
+                }
+                @if (detailedTestResult != null)
+                {
+                    <div class="alert @(detailedTestResult.Success ? "alert-success" : "alert-danger")">
+                        <strong>Endpoint Test Result:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li><strong>Status:</strong> @detailedTestResult.StatusCode (@detailedTestResult.ReasonPhrase)</li>
+                            <li><strong>Duration:</strong> @detailedTestResult.Duration.TotalMilliseconds ms</li>
+                            <li><strong>Success:</strong> @detailedTestResult.Success</li>
+                            @if (!string.IsNullOrEmpty(detailedTestResult.ErrorMessage))
+                            {
+                                <li><strong>Error:</strong> @detailedTestResult.ErrorMessage</li>
+                            }
+                            @if (!string.IsNullOrEmpty(detailedTestResult.Content))
+                            {
+                                <li><strong>Response:</strong> <code>@detailedTestResult.Content</code></li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>API Connection Status</h5>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-primary" @onclick="TestConnection">Test API Connection</button>
+                @if (connectionStatus.HasValue)
+                {
+                    <div class="alert @(connectionStatus.Value ? "alert-success" : "alert-danger") mt-3">
+                        <strong>Connection Status:</strong> @(connectionStatus.Value ? "Connected" : "Failed")
+                        @if (!connectionStatus.Value)
+                        {
+                            <br />
+                            <small>Ensure the API is running at the configured URL.</small>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>Public API Endpoints (No Authentication Required)</h5>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-secondary" @onclick="CallPublicEndpoint">Call /api/values</button>
+                @if (!string.IsNullOrEmpty(publicResult))
+                {
+                    <div class="alert alert-info mt-3">
+                        <strong>Public Endpoint Result:</strong>
+                        <pre style="background-color: #f8f9fa; padding: 1rem; border-radius: 0.25rem; margin-top: 0.5rem;">@publicResult</pre>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>Protected API Endpoints (Authentication Required)</h5>
+            </div>
+            <div class="card-body">
+                <div class="btn-group mb-2" role="group">
+                    <button class="btn btn-primary" @onclick="CallProtectedEndpoint">Call /api/values/protected</button>
+                    <button class="btn btn-primary" @onclick="CallUserProfile">Call /api/user/profile</button>
+                    <button class="btn btn-primary" @onclick="CallUserData">Call /api/user/user-data</button>
+                </div>
+                @if (!string.IsNullOrEmpty(protectedResult))
+                {
+                    <div class="alert alert-secondary mt-3">
+                        <strong>Protected Endpoint Result:</strong>
+                        <pre style="background-color: #f8f9fa; padding: 1rem; border-radius: 0.25rem; margin-top: 0.5rem;">@protectedResult</pre>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5>Admin-Only API Endpoints (Admin Role Required)</h5>
+            </div>
+            <div class="card-body">
+                <div class="btn-group mb-2" role="group">
+                    <button class="btn btn-danger" @onclick="CallAdminEndpoint">Call /api/values/admin-only</button>
+                    <button class="btn btn-danger" @onclick="CallAdminUserEndpoint">Call /api/user/admin-only</button>
+                </div>
+                @if (!string.IsNullOrEmpty(adminResult))
+                {
+                    <div class="alert alert-warning mt-3">
+                        <strong>Admin Endpoint Result:</strong>
+                        <pre style="background-color: #f8f9fa; padding: 1rem; border-radius: 0.25rem; margin-top: 0.5rem;">@adminResult</pre>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5>Current Access Token</h5>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-outline-primary" @onclick="ShowAccessToken">Show Current Access Token</button>
+                @if (!string.IsNullOrEmpty(accessToken))
+                {
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong>Access Token:</strong>
+                            <button class="btn btn-sm @(tokenCopied ? "btn-success" : "btn-outline-secondary")" 
+                                    @onclick="CopyTokenToClipboard">
+                                @(tokenCopied ? "✓ Copied!" : "📋 Copy Bearer Token")
+                            </button>
+                        </div>
+                        <textarea id="tokenTextArea" class="form-control" rows="10" readonly style="font-family: monospace; font-size: 0.8em;">@accessToken</textarea>
+                        <small class="text-muted">
+                            This token can be used in Swagger UI or other API testing tools.
+                            <br />
+                            <strong>Swagger UI:</strong> <a href="https://localhost:7002/swagger" target="_blank">https://localhost:7002/swagger</a>
+                        </small>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.selectTextInElement = (elementId) => {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.select();
+            element.setSelectionRange(0, 99999); // For mobile devices
+        }
+    };
+</script>
+
+@code {
+    private bool? connectionStatus;
+    private string? publicResult;
+    private string? protectedResult;
+    private string? adminResult;
+    private string? accessToken;
+    private string? diagnosticsResult;
+    private ApiTestResult? detailedTestResult;
+    private bool tokenCopied = false;
+
+    private async Task TestConnection()
+    {
+        connectionStatus = await ApiService.TestConnectionAsync();
+    }
+
+    private async Task CallPublicEndpoint()
+    {
+        publicResult = await ApiService.GetRawAsync("/api/values");
+    }
+
+    private async Task CallProtectedEndpoint()
+    {
+        protectedResult = await ApiService.GetRawAsync("/api/values/protected");
+    }
+
+    private async Task CallUserProfile()
+    {
+        protectedResult = await ApiService.GetRawAsync("/api/user/profile");
+    }
+
+    private async Task CallUserData()
+    {
+        protectedResult = await ApiService.GetRawAsync("/api/user/user-data");
+    }
+
+    private async Task CallAdminEndpoint()
+    {
+        adminResult = await ApiService.GetRawAsync("/api/values/admin-only");
+    }
+
+    private async Task CallAdminUserEndpoint()
+    {
+        adminResult = await ApiService.GetRawAsync("/api/user/admin-only");
+    }
+
+    private async Task ShowAccessToken()
+    {
+        accessToken = await AuthService.GetAccessTokenAsync();
+        tokenCopied = false; // Reset copy status when getting new token
+    }
+
+    private async Task CopyTokenToClipboard()
+    {
+        if (!string.IsNullOrEmpty(accessToken))
+        {
+            try
+            {
+                // Copy the token with "Bearer " prefix for direct use in Swagger
+                var tokenWithBearer = $"Bearer {accessToken}";
+                await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", tokenWithBearer);
+                
+                // Show success feedback
+                tokenCopied = true;
+                StateHasChanged();
+                
+                // Reset the button after 2 seconds
+                _ = Task.Delay(2000).ContinueWith(_ =>
+                {
+                    InvokeAsync(StateHasChanged);
+                });
+                
+                Logger.LogInformation("Token copied to clipboard successfully");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to copy token to clipboard");
+                // Fallback: Select the text in the textarea for manual copy
+                await JSRuntime.InvokeVoidAsync("selectTextInElement", "tokenTextArea");
+            }
+        }
+    }
+
+    private async Task AnalyzeToken()
+    {
+        diagnosticsResult = await ApiDiagnosticsService.AnalyzeTokenAsync();
+    }
+
+    private async Task TestProtectedEndpoint()
+    {
+        detailedTestResult = await ApiDiagnosticsService.TestEndpointAsync("/api/values/protected", requiresAuth: true);
+    }
+
+    private async Task CheckConfiguration()
+    {
+        diagnosticsResult = await ApiDiagnosticsService.CheckApiConfigurationAsync();
+    }
+
+    private async Task RunDiagnostics()
+    {
+        var diagnostics = new System.Text.StringBuilder();
+        
+        try
+        {
+            diagnostics.AppendLine("=== AUTHENTICATION DIAGNOSTICS ===");
+            diagnostics.AppendLine($"Timestamp: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+            diagnostics.AppendLine();
+
+            // 1. Check user authentication status
+            diagnostics.AppendLine("1. USER AUTHENTICATION STATUS:");
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            if (authState.User != null)
+            {
+                diagnostics.AppendLine($"   - IsAuthenticated: {authState.User.Identity?.IsAuthenticated}");
+                diagnostics.AppendLine($"   - Identity Name: {authState.User.Identity?.Name ?? "NULL"}");
+                diagnostics.AppendLine($"   - Authentication Type: {authState.User.Identity?.AuthenticationType ?? "NULL"}");
+                diagnostics.AppendLine($"   - Claims Count: {authState.User.Claims.Count()}");
+            }
+            else
+            {
+                diagnostics.AppendLine("   - User is NULL!");
+            }
+            diagnostics.AppendLine();
+
+            // 2. Check available tokens
+            diagnostics.AppendLine("2. TOKEN AVAILABILITY:");
+            var accessTokenResult = await AuthService.GetAccessTokenAsync();
+            if (!string.IsNullOrEmpty(accessTokenResult))
+            {
+                diagnostics.AppendLine($"   - Access Token: Available ({accessTokenResult.Length} chars)");
+                diagnostics.AppendLine($"   - Token Preview: {accessTokenResult.Substring(0, Math.Min(50, accessTokenResult.Length))}...");
+                
+                // Try to decode the JWT token
+                try
+                {
+                    var handler = new JwtSecurityTokenHandler();
+                    var token = handler.ReadJwtToken(accessTokenResult);
+                    
+                    diagnostics.AppendLine($"   - Token Type: {token.Header.Typ}");
+                    diagnostics.AppendLine($"   - Algorithm: {token.Header.Alg}");
+                    diagnostics.AppendLine($"   - Expires: {token.ValidTo:yyyy-MM-dd HH:mm:ss UTC}");
+                    diagnostics.AppendLine($"   - Time until expiry: {(token.ValidTo - DateTime.UtcNow).TotalMinutes:F1} minutes");
+                    
+                    var audience = token.Claims.FirstOrDefault(c => c.Type == "aud")?.Value;
+                    var issuer = token.Claims.FirstOrDefault(c => c.Type == "iss")?.Value;
+                    diagnostics.AppendLine($"   - Audience: {audience ?? "MISSING"}");
+                    diagnostics.AppendLine($"   - Issuer: {issuer ?? "MISSING"}");
+                }
+                catch (Exception tokenEx)
+                {
+                    diagnostics.AppendLine($"   - Token parsing error: {tokenEx.Message}");
+                }
+            }
+            else
+            {
+                diagnostics.AppendLine("   - Access Token: NOT AVAILABLE");
+            }
+            diagnostics.AppendLine();
+
+            // 3. Check user roles and claims
+            diagnostics.AppendLine("3. USER ROLES AND CLAIMS:");
+            if (authState.User != null)
+            {
+                var roleClaims = authState.User.Claims.Where(c => c.Type == ClaimTypes.Role || c.Type == "role").ToList();
+                diagnostics.AppendLine($"   - Role Claims Count: {roleClaims.Count}");
+                foreach (var role in roleClaims)
+                {
+                    diagnostics.AppendLine($"     * {role.Value}");
+                }
+                
+                // Check specific roles
+                diagnostics.AppendLine($"   - Is Admin: {authState.User.IsInRole("admin")}");
+                diagnostics.AppendLine($"   - Is User: {authState.User.IsInRole("user")}");
+                
+                // Show other important claims
+                var importantClaimTypes = new[] { "preferred_username", "email", "name", "sub", "aud", "iss" };
+                diagnostics.AppendLine("   - Important Claims:");
+                foreach (var claimType in importantClaimTypes)
+                {
+                    var claim = authState.User.Claims.FirstOrDefault(c => c.Type == claimType);
+                    diagnostics.AppendLine($"     * {claimType}: {claim?.Value ?? "NOT FOUND"}");
+                }
+            }
+            diagnostics.AppendLine();
+
+            // 4. Test API connectivity
+            diagnostics.AppendLine("4. API CONNECTIVITY TEST:");
+            try
+            {
+                var connectionTest = await ApiService.TestConnectionAsync();
+                diagnostics.AppendLine($"   - Public endpoint connectivity: {(connectionTest ? "SUCCESS" : "FAILED")}");
+            }
+            catch (Exception apiEx)
+            {
+                diagnostics.AppendLine($"   - Public endpoint connectivity: ERROR - {apiEx.Message}");
+            }
+
+            try
+            {
+                var protectedTest = await ApiService.GetRawAsync("/api/values/protected");
+                var isSuccess = !protectedTest.Contains("Error") && !protectedTest.Contains("Unauthorized");
+                diagnostics.AppendLine($"   - Protected endpoint authentication: {(isSuccess ? "SUCCESS" : "FAILED")}");
+                if (!isSuccess)
+                {
+                    diagnostics.AppendLine($"     Response: {protectedTest.Substring(0, Math.Min(200, protectedTest.Length))}");
+                }
+            }
+            catch (Exception apiEx)
+            {
+                diagnostics.AppendLine($"   - Protected endpoint authentication: ERROR - {apiEx.Message}");
+            }
+            diagnostics.AppendLine();
+
+            // 5. Configuration check
+            diagnostics.AppendLine("5. CONFIGURATION ANALYSIS:");
+            diagnostics.AppendLine("   - Check the following if authentication fails:");
+            diagnostics.AppendLine("     * API Base URL in appsettings.json");
+            diagnostics.AppendLine("     * Keycloak Authority URL matches between client and API");
+            diagnostics.AppendLine("     * API audience claim matches Keycloak client configuration");
+            diagnostics.AppendLine("     * CORS configuration allows the Blazor WebAssembly origin");
+            diagnostics.AppendLine("     * Token expiration (check if token is expired above)");
+            diagnostics.AppendLine();
+
+            diagnostics.AppendLine("=== END DIAGNOSTICS ===");
+        }
+        catch (Exception ex)
+        {
+            diagnostics.AppendLine($"DIAGNOSTICS ERROR: {ex.Message}");
+            diagnostics.AppendLine($"Stack Trace: {ex.StackTrace}");
+        }
+
+        diagnosticsResult = diagnostics.ToString();
+        Logger.LogInformation("Diagnostics completed: {DiagnosticsLength} characters", diagnosticsResult.Length);
+    }
+}

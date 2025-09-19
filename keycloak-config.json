@@ -1,0 +1,17 @@
+﻿{
+    "Authentication":  {
+                           "Keycloak":  {
+                                            "ResponseType":  "code",
+                                            "ClientId":  "xaf-keycloak-auth-blazor",
+                                            "GetClaimsFromUserInfoEndpoint":  true,
+                                            "Authority":  "http://localhost:8080/realms/XafKeycloakAuth",
+                                            "SignedOutCallbackPath":  "/signout-callback-keycloak",
+                                            "SaveTokens":  true,
+                                            "Scope":  "openid profile email",
+                                            "RequireHttpsMetadata":  false,
+                                            "ClientSecret":  "aLdlDvNiZ0pVM1io3pn3xhCKeyp5a8uP",
+                                            "UsePkce":  true,
+                                            "CallbackPath":  "/signin-keycloak"
+                                        }
+                       }
+}

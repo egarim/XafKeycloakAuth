@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("XafKeycloakAuth.Win")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+02f54190ab89a9de21977ab5e0e83b08a2e5bad5")]
 [assembly: System.Reflection.AssemblyProductAttribute("XafKeycloakAuth.Win")]
 [assembly: System.Reflection.AssemblyTitleAttribute("XafKeycloakAuth.Win")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.*")]

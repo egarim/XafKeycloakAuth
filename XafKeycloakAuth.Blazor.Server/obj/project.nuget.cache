@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "VQGvtzaJaek=",
+  "dgSpecHash": "AWA2/uL3i+Q=",
   "success": true,
   "projectFilePath": "C:\\Users\\joche\\source\\repos\\XafKeycloakAuth\\XafKeycloakAuth\\XafKeycloakAuth.Blazor.Server\\XafKeycloakAuth.Blazor.Server.csproj",
   "expectedPackageFiles": [
@@ -51,6 +51,7 @@
     "C:\\Users\\joche\\.nuget\\packages\\messagepack.annotations\\3.1.4\\messagepack.annotations.3.1.4.nupkg.sha512",
     "C:\\Users\\joche\\.nuget\\packages\\messagepackanalyzer\\3.1.4\\messagepackanalyzer.3.1.4.nupkg.sha512",
     "C:\\Users\\joche\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.17\\microsoft.aspnetcore.authentication.jwtbearer.8.0.17.nupkg.sha512",
+    "C:\\Users\\joche\\.nuget\\packages\\microsoft.aspnetcore.authentication.openidconnect\\8.0.11\\microsoft.aspnetcore.authentication.openidconnect.8.0.11.nupkg.sha512",
     "C:\\Users\\joche\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\8.0.10\\microsoft.aspnetcore.cryptography.internal.8.0.10.nupkg.sha512",
     "C:\\Users\\joche\\.nuget\\packages\\microsoft.aspnetcore.dataprotection\\8.0.10\\microsoft.aspnetcore.dataprotection.8.0.10.nupkg.sha512",
     "C:\\Users\\joche\\.nuget\\packages\\microsoft.aspnetcore.dataprotection.abstractions\\8.0.10\\microsoft.aspnetcore.dataprotection.abstractions.8.0.10.nupkg.sha512",

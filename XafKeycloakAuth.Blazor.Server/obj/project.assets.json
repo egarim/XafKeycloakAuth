@@ -935,6 +935,25 @@
           "Microsoft.AspNetCore.App"
         ]
       },
+      "Microsoft.AspNetCore.Authentication.OpenIdConnect/8.0.11": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.1.2"
+        },
+        "compile": {
+          "lib/net8.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll": {
+            "related": ".xml"
+          }
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "Microsoft.AspNetCore.Cryptography.Internal/8.0.10": {
         "type": "package",
         "compile": {
@@ -4401,6 +4420,21 @@
         "lib/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.xml",
         "microsoft.aspnetcore.authentication.jwtbearer.8.0.17.nupkg.sha512",
         "microsoft.aspnetcore.authentication.jwtbearer.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.Authentication.OpenIdConnect/8.0.11": {
+      "sha512": "jbpYiymDIE2hJBMOOX0fi701bAzm+QlOMAfByC1A/HEiMZMS7iPJ8bfOQ3WQvXacu/dwbMJsBBHqaliSmDsFwQ==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.authentication.openidconnect/8.0.11",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net8.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.dll",
+        "lib/net8.0/Microsoft.AspNetCore.Authentication.OpenIdConnect.xml",
+        "microsoft.aspnetcore.authentication.openidconnect.8.0.11.nupkg.sha512",
+        "microsoft.aspnetcore.authentication.openidconnect.nuspec"
       ]
     },
     "Microsoft.AspNetCore.Cryptography.Internal/8.0.10": {
@@ -8862,6 +8896,7 @@
       "DevExpress.ExpressApp.CodeAnalysis >= 25.1.*-*",
       "DevExpress.ExpressApp.Validation >= 25.1.*-*",
       "DevExpress.ExpressApp.Validation.Blazor >= 25.1.*-*",
+      "Microsoft.AspNetCore.Authentication.OpenIdConnect >= 8.0.11",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 8.0.8",
       "Swashbuckle.AspNetCore >= 6.9.0",
       "Swashbuckle.AspNetCore.Annotations >= 6.9.0",
@@ -8969,6 +9004,11 @@
             "version": "[25.1.*-*, )",
             "versionCentrallyManaged": true
           },
+          "Microsoft.AspNetCore.Authentication.OpenIdConnect": {
+            "target": "Package",
+            "version": "[8.0.11, )",
+            "versionCentrallyManaged": true
+          },
           "Npgsql.EntityFrameworkCore.PostgreSQL": {
             "target": "Package",
             "version": "[8.0.8, )",
@@ -9046,6 +9086,7 @@
           "DevExpress.Persistent.BaseImpl.EFCore": "25.1.*-*",
           "DevExpress.RichEdit.Export": "25.1.*-*",
           "DevExpress.Win.Design": "25.1.*-*",
+          "Microsoft.AspNetCore.Authentication.OpenIdConnect": "8.0.11",
           "Microsoft.CodeAnalysis.Common": "4.10.0",
           "Microsoft.CodeAnalysis.CSharp": "4.10.0",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.10.0",

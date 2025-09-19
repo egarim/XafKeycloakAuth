@@ -15,6 +15,12 @@ public class ApplicationUser : PermissionPolicyUser, ISecurityUserWithLoginInfo,
     [Browsable(false)]
     public virtual DateTime LockoutEnd { get; set; }
 
+    /// <summary>
+    /// Indicates whether this user was created through Keycloak authentication
+    /// </summary>
+    [DisplayName("Created by Keycloak")]
+    public virtual bool CreatedByKeycloak { get; set; }
+
     [Browsable(false)]
     [NonCloneable]
     [DevExpress.ExpressApp.DC.Aggregated]

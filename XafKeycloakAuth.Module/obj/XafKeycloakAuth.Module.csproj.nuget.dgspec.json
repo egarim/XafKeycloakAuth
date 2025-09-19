@@ -221,6 +221,7 @@
             "DevExpress.Persistent.BaseImpl.EFCore": "25.1.*-*",
             "DevExpress.RichEdit.Export": "25.1.*-*",
             "DevExpress.Win.Design": "25.1.*-*",
+            "Microsoft.AspNetCore.Authentication.OpenIdConnect": "8.0.11",
             "Microsoft.CodeAnalysis.Common": "4.10.0",
             "Microsoft.CodeAnalysis.CSharp": "4.10.0",
             "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.10.0",

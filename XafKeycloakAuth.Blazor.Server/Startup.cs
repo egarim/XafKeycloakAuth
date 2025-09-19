@@ -4,6 +4,7 @@ using DevExpress.ExpressApp.Blazor.ApplicationBuilder;
 using DevExpress.ExpressApp.Blazor.Services;
 using DevExpress.Persistent.Base;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Server.Circuits;
 using Microsoft.EntityFrameworkCore;
 using XafKeycloakAuth.Blazor.Server.Services;
@@ -18,6 +19,7 @@ using DevExpress.ExpressApp.WebApi.Services;
 using XafKeycloakAuth.WebApi.JWT;
 using DevExpress.ExpressApp.Security.Authentication;
 using DevExpress.ExpressApp.Security.Authentication.ClientServer;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace XafKeycloakAuth.Blazor.Server;
 
@@ -32,6 +34,19 @@ public class Startup {
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
     public void ConfigureServices(IServiceCollection services) {
         services.AddSingleton(typeof(Microsoft.AspNetCore.SignalR.HubConnectionHandler<>), typeof(ProxyHubConnectionHandler<>));
+
+        // Add data protection and session support to fix state parameter issues
+        services.AddDataProtection()
+            .SetApplicationName("XafKeycloakAuth");
+        
+        services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(20);
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+            options.Cookie.SameSite = SameSiteMode.None;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        });
 
         services.AddRazorPages();
         services.AddServerSideBlazor();
@@ -63,18 +78,18 @@ public class Startup {
                     // Uncomment this code to use an in-memory database. This database is recreated each time the server starts. With the in-memory database, you don't need to make a migration when the data model is changed.
                     // Do not use this code in production environment to avoid data loss.
                     // We recommend that you refer to the following help topic before you use an in-memory database: https://docs.microsoft.com/en-us/ef/core/testing/in-memory
-                    //options.UseInMemoryDatabase();
-                    string connectionString = null;
-                    if(Configuration.GetConnectionString("ConnectionString") != null) {
-                        connectionString = Configuration.GetConnectionString("ConnectionString");
-                    }
-#if EASYTEST
-                    if(Configuration.GetConnectionString("EasyTestConnectionString") != null) {
-                        connectionString = Configuration.GetConnectionString("EasyTestConnectionString");
-                    }
-#endif
-                    ArgumentNullException.ThrowIfNull(connectionString);
-                    options.UseConnectionString(connectionString);
+                    options.UseInMemoryDatabase();
+                    //string connectionString = null;
+                    //if(Configuration.GetConnectionString("ConnectionString") != null) {
+                    //    connectionString = Configuration.GetConnectionString("ConnectionString");
+                    //}
+//#if EASYTEST
+//                    if(Configuration.GetConnectionString("EasyTestConnectionString") != null) {
+//                        connectionString = Configuration.GetConnectionString("EasyTestConnectionString");
+//                    }
+//#endif
+//                    ArgumentNullException.ThrowIfNull(connectionString);
+//                    options.UseConnectionString(connectionString);
                 })
                 .AddNonPersistent();
             builder.Security
@@ -100,14 +115,101 @@ public class Startup {
                 })
                 .AddPasswordAuthentication(options => {
                     options.IsSupportChangePassword = true;
-                });
+                })
+                .AddAuthenticationProvider<KeycloakAuthenticationProvider>();
         });
+        
         var authentication = services.AddAuthentication(options => {
             options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = "Keycloak";
         });
+        
         authentication.AddCookie(options => {
             options.LoginPath = "/LoginPage";
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+            options.SlidingExpiration = true;
+            options.Cookie.SameSite = SameSiteMode.None;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            options.Cookie.HttpOnly = true;
         });
+        
+        // Add Keycloak OpenID Connect authentication
+        authentication.AddOpenIdConnect("Keycloak", "Keycloak", options => {
+            var keycloakConfig = Configuration.GetSection("Authentication:Keycloak");
+            
+            options.Authority = keycloakConfig["Authority"];
+            options.ClientId = keycloakConfig["ClientId"];
+            options.ClientSecret = keycloakConfig["ClientSecret"];
+            options.RequireHttpsMetadata = bool.Parse(keycloakConfig["RequireHttpsMetadata"] ?? "false");
+            options.ResponseType = keycloakConfig["ResponseType"];
+            options.Scope.Clear();
+            options.Scope.Add("openid");
+            options.Scope.Add("profile");
+            options.Scope.Add("email");
+            options.CallbackPath = keycloakConfig["CallbackPath"];
+            options.SignedOutCallbackPath = keycloakConfig["SignedOutCallbackPath"];
+            options.GetClaimsFromUserInfoEndpoint = bool.Parse(keycloakConfig["GetClaimsFromUserInfoEndpoint"] ?? "true");
+            options.SaveTokens = bool.Parse(keycloakConfig["SaveTokens"] ?? "true");
+            options.UsePkce = bool.Parse(keycloakConfig["UsePkce"] ?? "false");
+            options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            
+            options.Events = new OpenIdConnectEvents
+            {
+                OnRedirectToIdentityProvider = context =>
+                {
+                    // Customize the redirect to Keycloak if needed
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                    logger.LogInformation("Redirecting to Keycloak for authentication");
+                    return Task.CompletedTask;
+                },
+                OnRedirectToIdentityProviderForSignOut = context =>
+                {
+                    // Handle logout redirect to Keycloak
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                    logger.LogInformation("Redirecting to Keycloak for logout");
+                    return Task.CompletedTask;
+                },
+                OnSignedOutCallbackRedirect = context =>
+                {
+                    // Handle post-logout callback from Keycloak
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                    logger.LogInformation("Keycloak logout completed, redirecting to home");
+                    context.Response.Redirect("/");
+                    context.HandleResponse();
+                    return Task.CompletedTask;
+                },
+                OnAuthenticationFailed = context =>
+                {
+                    // Log authentication failures with more detail
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                    logger.LogError(context.Exception, "Keycloak authentication failed. Exception: {ExceptionMessage}", context.Exception?.Message);
+                    
+                    // Handle state protection errors specifically
+                    if (context.Exception?.Message?.Contains("Unable to unprotect") == true)
+                    {
+                        logger.LogWarning("State protection error - clearing authentication and redirecting to start fresh");
+                        context.Response.Redirect("/Authentication/Login");
+                        context.HandleResponse();
+                    }
+                    
+                    return Task.CompletedTask;
+                },
+                OnTokenValidated = context =>
+                {
+                    // Token has been validated, user will be redirected back
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                    logger.LogInformation("Keycloak token validated for user: {User}", context.Principal?.Identity?.Name);
+                    return Task.CompletedTask;
+                },
+                OnMessageReceived = context =>
+                {
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Startup>>();
+                    logger.LogInformation("OpenID Connect message received at {Path}", context.Request.Path);
+                    return Task.CompletedTask;
+                }
+            };
+        });
+        
         authentication.AddJwtBearer(options => {
             options.TokenValidationParameters = new TokenValidationParameters() {
                 ValidateIssuerSigningKey = true,
@@ -119,6 +221,7 @@ public class Startup {
                 AuthenticationType = JwtBearerDefaults.AuthenticationScheme
             };
         });
+        
         services.AddAuthorization(options => {
             options.DefaultPolicy = new AuthorizationPolicyBuilder(
                 JwtBearerDefaults.AuthenticationScheme)
@@ -192,10 +295,13 @@ public class Startup {
         app.UseRequestLocalization();
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseSession();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseAntiforgery();
         app.UseXaf();
+        // Add Keycloak to XAF bridge middleware AFTER XAF initialization (like LoginExample)
+        app.UseMiddleware<KeycloakXafBridgeMiddleware>();
         app.UseEndpoints(endpoints => {
             endpoints.MapXafEndpoints();
             endpoints.MapBlazorHub();
