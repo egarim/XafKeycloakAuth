@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34309.116
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11012.119 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XafKeycloakAuth.Blazor.Server", "XafKeycloakAuth.Blazor.Server\XafKeycloakAuth.Blazor.Server.csproj", "{84FA00A5-BB15-4C47-A244-467F317B967C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XafKeycloakAuth.Module", "XafKeycloakAuth.Module\XafKeycloakAuth.Module.csproj", "{A4BF57EF-9AEE-45D5-9843-F927D4095C09}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XafKeycloakAuth.Win", "XafKeycloakAuth.Win\XafKeycloakAuth.Win.csproj", "{8BF9107F-E027-41F2-978F-5AEF960DCCCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xaf.Blazor.KeycloakAuth", "Xaf.Blazor.KeycloakAuth\Xaf.Blazor.KeycloakAuth.csproj", "{48A8018F-C8F7-DC29-D202-6B8FB178494E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +36,12 @@ Global
 		{8BF9107F-E027-41F2-978F-5AEF960DCCCB}.EasyTest|Any CPU.Build.0 = EasyTest|Any CPU
 		{8BF9107F-E027-41F2-978F-5AEF960DCCCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BF9107F-E027-41F2-978F-5AEF960DCCCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48A8018F-C8F7-DC29-D202-6B8FB178494E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48A8018F-C8F7-DC29-D202-6B8FB178494E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48A8018F-C8F7-DC29-D202-6B8FB178494E}.EasyTest|Any CPU.ActiveCfg = Release|Any CPU
+		{48A8018F-C8F7-DC29-D202-6B8FB178494E}.EasyTest|Any CPU.Build.0 = Release|Any CPU
+		{48A8018F-C8F7-DC29-D202-6B8FB178494E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48A8018F-C8F7-DC29-D202-6B8FB178494E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

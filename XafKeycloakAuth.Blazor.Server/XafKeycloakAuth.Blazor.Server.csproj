@@ -30,5 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XafKeycloakAuth.Module\XafKeycloakAuth.Module.csproj" />
+    <ProjectReference Include="..\Xaf.Blazor.KeycloakAuth\Xaf.Blazor.KeycloakAuth.csproj" />
   </ItemGroup>
 </Project>

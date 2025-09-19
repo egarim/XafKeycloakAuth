@@ -1,0 +1,80 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    
+    <!-- NuGet Package Properties -->
+    <PackageId>Xaf.Blazor.KeycloakAuth</PackageId>
+    <Title>XAF Blazor Keycloak Authentication</Title>
+    <Authors>DevExpress Community</Authors>
+    <Description>
+      A comprehensive NuGet package that provides seamless Keycloak OpenID Connect authentication integration for DevExpress XAF Blazor Server applications. 
+      
+      Features:
+      - Easy setup with fluent configuration API
+      - Automatic user creation and role mapping
+      - Proper logout handling that prevents automatic re-authentication
+      - Bridge middleware for XAF Security System integration
+      - Support for multiple authentication methods (password + Keycloak)
+      - Configurable user property mapping from Keycloak claims
+      - Enhanced authentication controller with comprehensive logout
+      - Full support for XAF Security roles and permissions
+      
+      Solves the common XAF logout issue where users are automatically re-authenticated when only OAuth is configured.
+    </Description>
+    <PackageTags>XAF;DevExpress;Keycloak;Authentication;Blazor;OIDC;OpenID;Security</PackageTags>
+    <PackageProjectUrl>https://github.com/egarim/XafKeycloakAuth</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/egarim/XafKeycloakAuth</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageReleaseNotes>
+      v1.0.0:
+      - Initial release
+      - Keycloak OpenID Connect authentication provider for XAF
+      - Bridge middleware for seamless XAF Security integration
+      - Configurable user creation and property mapping
+      - Enhanced logout functionality preventing automatic re-authentication
+      - Fluent configuration API for easy setup
+      - Support for multiple authentication methods
+      - Comprehensive logging and error handling
+    </PackageReleaseNotes>
+  </PropertyGroup>
+
+  <!-- NuGet Package Files -->
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" Condition="Exists('icon.png')" />
+  </ItemGroup>
+
+  <!-- Framework Dependencies -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+  </ItemGroup>
+  
+  <!-- Framework References -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <!-- DevExpress XAF Dependencies -->
+  <ItemGroup>
+    <PackageReference Include="DevExpress.ExpressApp" />
+    <PackageReference Include="DevExpress.ExpressApp.Security" />
+    <PackageReference Include="DevExpress.ExpressApp.Blazor" />
+    <PackageReference Include="DevExpress.Persistent.BaseImpl.EFCore" />
+  </ItemGroup>
+
+</Project>
