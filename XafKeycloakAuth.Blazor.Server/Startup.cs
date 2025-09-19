@@ -121,7 +121,8 @@ public class Startup {
         
         var authentication = services.AddAuthentication(options => {
             options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = "Keycloak";
+            // Allow users to choose between password and external authentication
+            // Don't set a default challenge scheme to prevent automatic OAuth redirect
         });
         
         authentication.AddCookie(options => {
