@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("XafKeycloakAuth.Module")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fc5a8f88e5f1fd60968e621cba9d8f1bb01374e6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6356c63e30fb19b9bbd9e37b659e41c780194b6c")]
 [assembly: System.Reflection.AssemblyProductAttribute("XafKeycloakAuth.Module")]
 [assembly: System.Reflection.AssemblyTitleAttribute("XafKeycloakAuth.Module")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.*")]
